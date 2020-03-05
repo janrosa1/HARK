@@ -1,7 +1,7 @@
 ## A User’s Guide for HARK:  
 Heterogeneous Agents Resources and toolKit
 
-May 21, 2018
+February 13, 2020
 
 Christopher D Carroll1  
 Johns Hopkins University  
@@ -16,7 +16,7 @@ University of Delaware
 
   
 
-![PIC](HARKmanual0x.png)
+![PIC](UserGuidePic-.png)
 
 1 Carroll: <http://econ.jhu.edu/people/ccarroll/>, email:
 [ccarroll@jhu.edu](mailto:ccarroll@jhu.edu) 2 Kaufman:
@@ -304,8 +304,9 @@ should be compared when calculating the distance between two instances of that
 class. For example, the class ConsumerSolution has distance_criteria =
 [’cFunc’], indicating that only the consumption function attribute of the
 solution matters when comparing the distance between two instances of
-ConsumerSolution. See [here](https://econ-
-ark.github.io/HARK/generated/HARK.core.html) for online documentation.
+ConsumerSolution. See
+[here](https://hark.readthedocs.io/en/latest/generated/HARK.core.html) for
+online documentation.
 
 #### 0.2.2 HARK.utilities
 
@@ -326,15 +327,15 @@ distribution) as well as manipulating these representations (e.g. appending
 one outcome to an existing distribution, or combining independent univariate
 distributions into one multivariate distribution). As a convention in HARK,
 continuous distributions are approximated as finite discrete distributions
-when solving models; an ![N  ](HARKmanual1x.png)-dimensional random variable
-is formatted as a length ![N + 1  ](HARKmanual2x.png) list of 1D arrays, with
+when solving models; an ![N  ](HARKmanual0x.png)-dimensional random variable
+is formatted as a length ![N +  1  ](HARKmanual1x.png) list of 1D arrays, with
 the first element representing event probabilities and all other elements are
-realizations of the ![N  ](HARKmanual3x.png) component RVs. This both
+realizations of the ![N  ](HARKmanual2x.png) component RVs. This both
 simplifies solution methods (reducing numeric integrals to simple dot
 products) and allows users to easily test whether their chosen degree of
 discretization yields a sufficient approximation to the full distribution. See
-[here](https://econ-ark.github.io/HARK/generated/HARK.utilities.html) for
-online documentation.
+[here](https://hark.readthedocs.io/en/latest/generated/HARK.utilities.html)
+for online documentation.
 
 #### 0.2.3 HARK.interpolation
 
@@ -369,8 +370,8 @@ interpolation up to 4D, 1D cubic spline interpolation, (multi)linear
 interpolation over 1D interpolations (up to 4D total), (multi)linear
 interpolation over 2D interpolations (up to 4D total), linear interpolation
 over 3D interpolations, 2D curvilinear interpolation over irregular grids, and
-a 1D “lower envelope” interpolator. See [here](https://econ-
-ark.github.io/HARK/generated/HARKinterpolation.html) for online documentation.
+a 1D “lower envelope” interpolator. See [here](https://hark.readthedocs.io/en/
+latest/generated/HARK.interpolation.html) for online documentation.
 
 #### 0.2.4 HARK.simulation
 
@@ -380,8 +381,8 @@ include normal, lognormal, Weibull (including exponential), uniform,
 Bernoulli, and discrete. As an example of their use, these tools are used in
 the consumption-saving models of ConsIndShockModel.py to simulate permanent
 and transitory income shocks as well as unemployment events. See
-[here](https://econ-ark.github.io/HARK/generated/HARKsimulation.html) for
-online documentation.
+[here](https://hark.readthedocs.io/en/latest/generated/HARK.simulation.html)
+for online documentation.
 
 #### 0.2.5 HARK.estimation
 
@@ -393,8 +394,8 @@ data (i.e. for a bootstrap); the minimizers are merely convenience wrappers
 (with result reporting) for optimizers included in scipy.optimize. Future
 functionality will include more robust global search methods, including
 genetic algorithms, simulated annealing, and differential evolution. See
-[here](https://econ-ark.github.io/HARK/generated/HARKestimation.html) for full
-documentation.
+[here](https://hark.readthedocs.io/en/latest/generated/HARK.estimation.html)
+for full documentation.
 
 #### 0.2.6 HARK.parallel
 
@@ -412,8 +413,9 @@ a function called multiThreadCommandsFake that does just that, with identical
 syntax to multiThreadCommands; multithreading in HARK can thus be easily
 turned on and off.[9](HARKmanual9.html#fn9x0) The module also has functions
 for a parallel implementation of the Nelder-Mead simplex algorithm, as
-described in Wiswall and Lee (2011). See [here](https://econ-
-ark.github.io/HARK/generated/HARK.parallel.html) for full documentation.
+described in Wiswall and Lee (2011). See
+[here](https://hark.readthedocs.io/en/latest/generated/HARK.parallel.html) for
+full documentation.
 
 ### 0.3 Microeconomics: the AgentType Class
 
@@ -553,26 +555,26 @@ income each period, and knows the interest rate on assets that he holds from
 one period to the next. His decision about how much to consume in a particular
 period can be expressed in Bellman form as:
 
-![Vt\(Mt \)  =  max  u\(Ct\) + β//Dt E\[Vt+1\(Mt+1 \)\],
+![Vt\(Mt \) =   maCx  u\(Ct\) + β//DtE \[Vt+1 \(Mt+1 \)\],
 
-              Ct
-     At  =  Mt  - Ct,
+              t
+    At  =   Mt -  Ct,
+  Mt+1  =   RAt +  Yt+1,
 
-  Mt+1   =  RAt  + Yt+1,
+   Yt+1  =   Γ t+1Yt,
 
-   Yt+1  =  Γ t+1Yt,
-
-             C1- ρ
-  u\(C \)  =   -----.
-
-             1 - ρ  ](HARKmanual4x.png)
+            -C1-ρ-
+  u\(C \) =   1 - ρ .  ](HARKmanual3x.png)
 
 An agent’s problem is thus characterized by values of ![ρ
-](HARKmanual5x.png), ![R  ](HARKmanual6x.png), and ![β  ](HARKmanual7x.png)
-plus sequences of survival probabilities ![//Dt  ](HARKmanual8x.png) and
-income growth factors ![Γ t  ](HARKmanual9x.png) for ![t = 0,⋅⋅⋅,T
-](HARKmanual10x.png). This problem has an analytical solution for both the
-value function and the consumption function.
+](HARKmanual4x.png), ![R  ](HARKmanual5x.png), and ![β  ](HARKmanual6x.png)
+plus sequences of survival probabilities ![D
+
+// t  ](HARKmanual7x.png) and income growth factors ![Γ
+
+ t  ](HARKmanual8x.png) for ![t = 0,⋅⋅⋅,T  ](HARKmanual9x.png). This problem
+has an analytical solution for both the value function and the consumption
+function.
 
 The ConsIndShockModel module defines the class PerfForesightConsumerType as a
 subclass of AgentType and provides solver functions for several variations of
@@ -603,14 +605,14 @@ ConsumerSolution objects, representing the period-by-period solution to the
 model.[15](HARKmanual15.html#fn15x0) Each ConsumerSolution has several
 attributes:
 
-  * cFunc: Optimal consumption function for this period as a function of (normalized) market resources ![m   = M  ∕Y
-  t     t  t  ](HARKmanual11x.png). Can be called like any other function:
+  * cFunc: Optimal consumption function for this period as a function of (normalized) market resources ![m  = M  ∕Y
+  t    t   t  ](HARKmanual10x.png). Can be called like any other function:
 MyConsumer.solution[0].cFunc(5) returns consumption at ![mt = 5
-](HARKmanual12x.png).
+](HARKmanual11x.png).
 
-  * vFunc: Value function (over market resources ![mt  ](HARKmanual13x.png)); can be evaluated like cFunc. 
-  * mNrmMin: Minimum value of normalized market resources ![mt  ](HARKmanual14x.png) such that cFunc and vFunc are defined. 
-  * hNrm: Normalized human wealth– the PDV of future income (ignoring mortality) divided by current period income ![Yt  ](HARKmanual15x.png). 
+  * vFunc: Value function (over market resources ![mt  ](HARKmanual12x.png)); can be evaluated like cFunc. 
+  * mNrmMin: Minimum value of normalized market resources ![mt  ](HARKmanual13x.png) such that cFunc and vFunc are defined. 
+  * hNrm: Normalized human wealth– the PDV of future income (ignoring mortality) divided by current period income ![Yt  ](HARKmanual14x.png). 
   * MPC: The constant marginal propensity to consume (linear consumption function). 
 
 The following command generates the plot for the perfect foresight consumption
@@ -733,115 +735,125 @@ economic subfield of aesthemetrics, the
 FashionVictimModel.[17](HARKmanual17.html#fn17x0)
 [18](HARKmanual18.html#fn18x0) This module defines a subclass of AgentType
 called FashionVictimType. Each period, fashion victims make a binary choice of
-style ![s  ](HARKmanual16x.png): to dress as a jock (0) or punk (1). They
+style ![s  ](HARKmanual15x.png): to dress as a jock (0) or punk (1). They
 receive utility directly from the outfit they wear and as a function of the
 proportion of the population who just wore the same style; they also pay
-switching costs (![cpj  ](HARKmanual17x.png),![cjp  ](HARKmanual18x.png)) if
+switching costs (![cpj  ](HARKmanual16x.png),![cjp  ](HARKmanual17x.png)) if
 they change styles rather than keep the same as the previous period. Moreover,
 they receive an idiosyncratic type 1 extreme value (T1EV) preference shock to
 each style in each period. Defining the population punk proportion as ![p
-](HARKmanual19x.png) and the conformity utility function as ![f : \[0,1\] → ℝ
-](HARKmanual20x.png), the current period utility function is thus:
+](HARKmanual18x.png) and the conformity utility function as ![f : \[0, 1\] → ℝ
+](HARKmanual19x.png), the current period utility function is thus:
 
-![u\(s ;s   ,p\) = s f\(p \)+ \(1- s \)f\(1- p \)+s  U + \(1- s \)U  - c s
-\(1- s \)- c \(1 - s  \)s .
+![u\(st;st- 1,pt\) = stf\(pt\)+ \(1 - st\)f\(1- pt\)+stUp+ \(1- st\)Uj-
+cpjst-1\(1- st\)- cjp\(1- st-1\)st.
 
-   t  t- 1  t    t   t        t       t    t p       t   j  pj t-1     t    jp
-t-1  t
-
-](HARKmanual21x.png)
+](HARKmanual20x.png)
 
 Fashion victims are forward looking and discount future utility at a constant
-rate of ![β  ](HARKmanual22x.png) per period. To simplify the analysis, we
+rate of ![β  ](HARKmanual21x.png) per period. To simplify the analysis, we
 assume they believe that the population punk proportion in the next period is
 a linear function of the punk proportion in the current period, subject to a
 uniformly distributed shock. No restrictions are put on the function ![f
-](HARKmanual23x.png); fashion victims might be conformists who like to dress
-the same as others (![f′\(p\) > 0  ](HARKmanual24x.png)) or hipsters who like
-to style themselves in the minority (![f′\(p\) < 0
-](HARKmanual25x.png)).[19](HARKmanual19.html#fn19x0) A fashion victim’s
-problem can be written in Bellman form as:
+](HARKmanual22x.png); fashion victims might be conformists who like to dress
+the same as others (![ ′
+
+f \(p\) > 0  ](HARKmanual23x.png)) or hipsters who like to style themselves in
+the minority (![ ′
+
+f \(p\) < 0  ](HARKmanual24x.png)).[19](HARKmanual19.html#fn19x0) A fashion
+victim’s problem can be written in Bellman form as:
 
 ![               \[                                          \]
 
-V\(st-1,pt\) = E  smt∈a{x0,1}u \(st;st-1,pt\) + ηst + βE \[V \(st,pt+1\)\] ,
+V \(st-1,pt\) = E   max  u\(st;st-1,pt\) + ηst + βE \[V\(st,pt+1\)\] ,
+
+                 st∈{0,1}
+](HARKmanual26x.png)
+
+![pt+1 = apt + b + πt+1,    πt+1 ~ U \[- w, w \],    η0,η1 ~ T 1EV.
 
 ](HARKmanual27x.png)
 
-![pt+1 =  apt + b + πt+1,    πt+1 ~  U\[- w,w \],    η0,η1 ~ T 1EV.
-
-](HARKmanual28x.png)
-
 An instance of FashionVictimType is thus characterized by values of ![Up
-](HARKmanual29x.png), ![Uj  ](HARKmanual30x.png), ![cpj  ](HARKmanual31x.png),
-![cjp  ](HARKmanual32x.png) and a function ![f  ](HARKmanual33x.png), as well
-as beliefs about ![pt+1   ](HARKmanual34x.png) as a function of ![pt
-](HARKmanual35x.png) (summarized by slope ![a  ](HARKmanual36x.png), intercept
-![b  ](HARKmanual37x.png), and uniform shock width ![w  ](HARKmanual38x.png)).
+](HARKmanual28x.png), ![U
+
+  j  ](HARKmanual29x.png), ![c
+
+ pj  ](HARKmanual30x.png), ![c
+
+ jp  ](HARKmanual31x.png) and a function ![f  ](HARKmanual32x.png), as well as
+beliefs about ![p
+
+ t+1   ](HARKmanual33x.png) as a function of ![pt  ](HARKmanual34x.png)
+(summarized by slope ![a  ](HARKmanual35x.png), intercept ![b
+](HARKmanual36x.png), and uniform shock width ![w  ](HARKmanual37x.png)).
 Given this information, a FashionVictimType’s infinite horizon microeconomic
 model can be solved by backward induction in a few lines; the “one period
 solver” is given by solveFashion. However, while individual agents treat the
-dynamics of ![pt  ](HARKmanual39x.png) as exogenous, they are in fact
+dynamics of ![pt  ](HARKmanual38x.png) as exogenous, they are in fact
 endogenously determined by the actions of all the fashion victims in the
 market.[20](HARKmanual20.html#fn20x0) A dynamic general equilibrium of the
-“macroeconomic fashion model” is thus characterized by a triple of ![\(a,b,w\)
-](HARKmanual40x.png) such that when fashion victims believe in this “punk
+“macroeconomic fashion model” is thus characterized by a triple of ![\(a,b,w
+\)  ](HARKmanual39x.png) such that when fashion victims believe in this “punk
 evolution rule” and act optimally, their collective fashion choices exhibit
 this same rule when the model is simulated.
 
 The search for a dynamic general equilibrium is implemented in HARK’s Market
 class with the following definitions:
 
-sow_vars = [’pNow’] (macroeconomic outcome is ![pt  ](HARKmanual41x.png))
+sow_vars = [’pNow’] (macroeconomic outcome is ![p
 
-reap_vars = [’sNow’] (microeconomic outcomes are ![st  ](HARKmanual42x.png)
+ t  ](HARKmanual40x.png))
+
+reap_vars = [’sNow’] (microeconomic outcomes are ![st  ](HARKmanual41x.png)
 for many agents)
 
-track_vars = [’pNow’] (must track history of ![pt  ](HARKmanual43x.png))
+track_vars = [’pNow’] (must track history of ![pt  ](HARKmanual42x.png))
 
 dyn_vars = [’pNextSlope’,’pNextIntercept’,’pNextWidth’] (dynamic rule
-![\(a,b,w \)  ](HARKmanual44x.png))
+![\(a,b,w \)  ](HARKmanual43x.png))
 
 millRule = calcPunkProp (aggregate process: average the style choices of all
 agents)
 
 calcDynamics = calcFashionEvoFunc (calculate new ![\(a,b,w\)
-](HARKmanual45x.png) with autoregression of ![pt  ](HARKmanual46x.png))
+](HARKmanual44x.png) with autoregression of ![pt  ](HARKmanual45x.png))
 
 act_T = 1000 (simulate 1000 periods of the fashion market)
 
-tolerance = 0.01 (terminate solution when ![\(a,b,w \)  ](HARKmanual47x.png)
+tolerance = 0.01 (terminate solution when ![\(a,b,w \)  ](HARKmanual46x.png)
 changes by less than 0.01)
 
 The agents attribute has a list of 22 FashionVictimTypes, which vary in their
-values of ![Up  ](HARKmanual48x.png) and ![U
+values of ![Up  ](HARKmanual47x.png) and ![Uj  ](HARKmanual48x.png), and their
+![f  ](HARKmanual49x.png) functions. The marketAction method of
+FashionVictimType simulates one period of the microeconomic model: each agent
+receives style preference shocks ![η
 
- j  ](HARKmanual49x.png), and their ![f  ](HARKmanual50x.png) functions. The
-marketAction method of FashionVictimType simulates one period of the
-microeconomic model: each agent receives style preference shocks ![η0
-](HARKmanual51x.png) and ![η1   ](HARKmanual52x.png), sees the current
-proportion of punks ![pt  ](HARKmanual53x.png) (sown to them as pNow), and
-chooses which style to wear, storing it in the binary array sNow, an attribute
-of self.
+ 0   ](HARKmanual50x.png) and ![η
+
+ 1   ](HARKmanual51x.png), sees the current proportion of punks ![pt
+](HARKmanual52x.png) (sown to them as pNow), and chooses which style to wear,
+storing it in the binary array sNow, an attribute of self.
 
 The millRule for this market is extremely simple: it flattens the list of
 binary arrays of individual style choices (gathered in the reap step) and
-averages them into a new value of ![pt  ](HARKmanual54x.png), to be tracked as
+averages them into a new value of ![pt  ](HARKmanual53x.png), to be tracked as
 a history and sown back to the agents to begin the cycle again. Once a history
-of 1000 values of ![pt  ](HARKmanual55x.png) has been generated with the
-makeHistory method, we can calculate a new dynamic fashion rule with
-calcFashionEvoFunc by regressing ![p
+of 1000 values of ![p
 
- t  ](HARKmanual56x.png) on ![p
-
- t- 1   ](HARKmanual57x.png), approximating ![w  ](HARKmanual58x.png) as twice
-the standard deviation of prediction errors.[21](HARKmanual21.html#fn21x0) The
-new fashion rule is an instance of the simple FashionEvoFunc class, whose only
-methods are inherited from HARKobject.
+ t  ](HARKmanual54x.png) has been generated with the makeHistory method, we
+can calculate a new dynamic fashion rule with calcFashionEvoFunc by regressing
+![pt  ](HARKmanual55x.png) on ![pt-1   ](HARKmanual56x.png), approximating ![w
+](HARKmanual57x.png) as twice the standard deviation of prediction
+errors.[21](HARKmanual21.html#fn21x0) The new fashion rule is an instance of
+the simple FashionEvoFunc class, whose only methods are inherited from
+HARKobject.
 
 When the solve method is run, the solver successively solves each agent’s
 microeconomic problem, runs the makeHistory method to generate a 1000 period
-history of ![pt  ](HARKmanual60x.png), and calculates a new punk evolution
+history of ![pt  ](HARKmanual59x.png), and calculates a new punk evolution
 rule based on this history; the solver terminates when consecutive rules
 differ by less than 0.01 in any dimension.
 
@@ -916,7 +928,7 @@ To prepare to contribute to HARK, follow these simple steps:
   1. Make a GitHub account: Go to [github.com](https://www.github.com); the homepage should prompt you to choose a username and password. Signing up is quick, easy, and free.[24](HARKmanual24.html#fn24x0)
   2. Install GitHub Desktop: Go to [desktop.github.com](https://desktop.github.com/) and download the Desktop application for your operating system, then install it. After opening Desktop for the first time, enter your GitHub login to connect it to your account. 
   3. Fork the HARK repository: Go to the [HARK repository page](https://github.com/econ-ark/HARK), click on the Fork button in the upper right, and choose to fork HARK to your own GitHub account. This creates a new repository identical to the one hosted by Econ-Ark at the moment you fork it, but hosted on your account instead. 
-  4. Add the repository to Desktop: Open GitHub Desktop, click on the ![+  ](HARKmanual61x.png) icon in the upper left, and select clone. Find the repository named yourusername/HARK, click the Clone button at the bottom of the dialogue window, and choose a directory on your local machine.
+  4. Add the repository to Desktop: Open GitHub Desktop, click on the ![+  ](HARKmanual60x.png) icon in the upper left, and select clone. Find the repository named yourusername/HARK, click the Clone button at the bottom of the dialogue window, and choose a directory on your local machine.
 
 You now control a “fork” of the main HARK repository, hosted by GitHub, and
 have a clone of this fork on your local machine. You are free to edit your

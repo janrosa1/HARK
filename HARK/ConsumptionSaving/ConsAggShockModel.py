@@ -19,7 +19,12 @@ from HARK.simulation import drawDiscrete, drawUniform
 from HARK.ConsumptionSaving.ConsIndShockModel import ConsumerSolution, IndShockConsumerType
 from HARK import HARKobject, Market, AgentType
 from copy import deepcopy
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
+import HARK.ConsumptionSaving.ConsumerParameters as Params
+
+__all__ = ['MargValueFunc2D', 'AggShockConsumerType', 'AggShockMarkovConsumerType',
+'CobbDouglasEconomy', 'SmallOpenEconomy', 'CobbDouglasMarkovEconomy',
+'SmallOpenMarkovEconomy', 'CobbDouglasAggVars', 'AggregateSavingRule', 'AggShocksDynamicRule']
 
 utility = CRRAutility
 utilityP = CRRAutilityP
@@ -79,6 +84,9 @@ class AggShockConsumerType(IndShockConsumerType):
         Make a new instance of AggShockConsumerType, an extension of
         IndShockConsumerType.  Sets appropriate solver and input lists.
         '''
+        params = Params.init_agg_shocks.copy()
+        params.update(kwds)
+        kwds = params
         AgentType.__init__(self, solution_terminal=deepcopy(IndShockConsumerType.solution_terminal_),
                            time_flow=time_flow, pseudo_terminal=False, **kwds)
 
@@ -375,6 +383,9 @@ class AggShockMarkovConsumerType(AggShockConsumerType):
     state is subject to Markov-style discrete state evolution.
     '''
     def __init__(self, **kwds):
+        params = Params.init_agg_mrkv_shocks.copy()
+        params.update(kwds)
+        kwds = params
         AggShockConsumerType.__init__(self, **kwds)
         self.addToTimeInv('MrkvArray')
         self.solveOnePeriod = solveConsAggMarkov
@@ -886,7 +897,11 @@ class CobbDouglasEconomy(Market):
     Note: The current implementation assumes a constant labor supply, but
     this will be generalized in the future.
     '''
-    def __init__(self, agents=[], tolerance=0.0001, act_T=1000, **kwds):
+    def __init__(self,
+                 agents=[],
+                 tolerance=0.0001,
+                 act_T=1200,
+                 **kwds):
         '''
         Make a new instance of CobbDouglasEconomy by filling in attributes
         specific to this kind of market.
@@ -906,6 +921,9 @@ class CobbDouglasEconomy(Market):
         -------
         None
         '''
+        params = Params.init_cobb_douglas.copy()
+        params.update(kwds)
+        kwds = params
         Market.__init__(self, agents=agents,
                         sow_vars=['MaggNow', 'AaggNow', 'RfreeNow',
                                   'wRteNow', 'PermShkAggNow', 'TranShkAggNow', 'KtoLnow'],
@@ -1330,7 +1348,11 @@ class CobbDouglasMarkovEconomy(CobbDouglasEconomy):
     productivity growth factor can vary over time.
 
     '''
-    def __init__(self, agents=[], tolerance=0.0001, act_T=1000, **kwds):
+    def __init__(self,
+                 agents=[],
+                 tolerance=0.0001,
+                 act_T=1200,
+                 **kwds):
         '''
         Make a new instance of CobbDouglasMarkovEconomy by filling in attributes
         specific to this kind of market.
@@ -1350,6 +1372,9 @@ class CobbDouglasMarkovEconomy(CobbDouglasEconomy):
         -------
         None
         '''
+        params = Params.init_mrkv_cobb_douglas.copy()
+        params.update(kwds)
+        kwds = params
         CobbDouglasEconomy.__init__(self, agents=agents, tolerance=tolerance, act_T=act_T, **kwds)
         self.sow_vars.append('MrkvNow')
 
@@ -1768,199 +1793,3 @@ class AggShocksDynamicRule(HARKobject):
         '''
         self.AFunc = AFunc
         self.distance_criteria = ['AFunc']
-
-
-###############################################################################
-
-def main():
-    import HARK.ConsumptionSaving.ConsumerParameters as Params
-    from time import clock
-    from HARK.utilities import plotFuncs
-
-    def mystr(number): return "{:.4f}".format(number)
-
-    solve_agg_shocks_micro = False  # Solve an AggShockConsumerType's microeconomic problem
-    solve_agg_shocks_market = True  # Solve for the equilibrium aggregate saving rule in a CobbDouglasEconomy
-
-    solve_markov_micro = False  # Solve an AggShockMarkovConsumerType's microeconomic problem
-    solve_markov_market = True  # Solve for the equilibrium aggregate saving rule in a CobbDouglasMarkovEconomy
-    solve_krusell_smith = True  # Solve a simple Krusell-Smith-style two state, two shock model
-    solve_poly_state = False    # Solve a CobbDouglasEconomy with many states, potentially utilizing the "state jumper"
-
-    # EXAMPLE IMPLEMENTATIONS OF AggShockConsumerType ###
-
-    if solve_agg_shocks_micro or solve_agg_shocks_market:
-        # Make an aggregate shocks consumer type
-        AggShockExample = AggShockConsumerType(**Params.init_agg_shocks)
-        AggShockExample.cycles = 0
-
-        # Make a Cobb-Douglas economy for the agents
-        EconomyExample = CobbDouglasEconomy(agents=[AggShockExample], **Params.init_cobb_douglas)
-        EconomyExample.makeAggShkHist()  # Simulate a history of aggregate shocks
-
-        # Have the consumers inherit relevant objects from the economy
-        AggShockExample.getEconomyData(EconomyExample)
-
-    if solve_agg_shocks_micro:
-        # Solve the microeconomic model for the aggregate shocks example type (and display results)
-        t_start = clock()
-        AggShockExample.solve()
-        t_end = clock()
-        print('Solving an aggregate shocks consumer took ' + mystr(t_end-t_start) + ' seconds.')
-        print('Consumption function at each aggregate market resources-to-labor ratio gridpoint:')
-        m_grid = np.linspace(0, 10, 200)
-        AggShockExample.unpackcFunc()
-        for M in AggShockExample.Mgrid.tolist():
-            mMin = AggShockExample.solution[0].mNrmMin(M)
-            c_at_this_M = AggShockExample.cFunc[0](m_grid+mMin, M*np.ones_like(m_grid))
-            plt.plot(m_grid+mMin, c_at_this_M)
-        plt.ylim(0., None)
-        plt.show()
-
-    if solve_agg_shocks_market:
-        # Solve the "macroeconomic" model by searching for a "fixed point dynamic rule"
-        t_start = clock()
-        print('Now solving for the equilibrium of a Cobb-Douglas economy.  This might take a few minutes...')
-        EconomyExample.solve()
-        t_end = clock()
-        print('Solving the "macroeconomic" aggregate shocks model took ' + str(t_end - t_start) + ' seconds.')
-
-        print('Aggregate savings as a function of aggregate market resources:')
-        plotFuncs(EconomyExample.AFunc, 0, 2*EconomyExample.kSS)
-        print('Consumption function at each aggregate market resources gridpoint (in general equilibrium):')
-        AggShockExample.unpackcFunc()
-        m_grid = np.linspace(0, 10, 200)
-        AggShockExample.unpackcFunc()
-        for M in AggShockExample.Mgrid.tolist():
-            mMin = AggShockExample.solution[0].mNrmMin(M)
-            c_at_this_M = AggShockExample.cFunc[0](m_grid+mMin, M*np.ones_like(m_grid))
-            plt.plot(m_grid+mMin, c_at_this_M)
-        plt.ylim(0., None)
-        plt.show()
-
-    # EXAMPLE IMPLEMENTATIONS OF AggShockMarkovConsumerType #
-
-    if solve_markov_micro or solve_markov_market or solve_krusell_smith:
-        # Make a Markov aggregate shocks consumer type
-        AggShockMrkvExample = AggShockMarkovConsumerType(**Params.init_agg_mrkv_shocks)
-        AggShockMrkvExample.IncomeDstn[0] = 2*[AggShockMrkvExample.IncomeDstn[0]]
-        AggShockMrkvExample.cycles = 0
-
-        # Make a Cobb-Douglas economy for the agents
-        MrkvEconomyExample = CobbDouglasMarkovEconomy(agents=[AggShockMrkvExample], **Params.init_mrkv_cobb_douglas)
-        MrkvEconomyExample.DampingFac = 0.2  # Turn down damping
-        MrkvEconomyExample.makeAggShkHist()  # Simulate a history of aggregate shocks
-        AggShockMrkvExample.getEconomyData(
-            MrkvEconomyExample)  # Have the consumers inherit relevant objects from the economy
-
-    if solve_markov_micro:
-        # Solve the microeconomic model for the Markov aggregate shocks example type (and display results)
-        t_start = clock()
-        AggShockMrkvExample.solve()
-        t_end = clock()
-        print('Solving an aggregate shocks Markov consumer took ' + mystr(t_end-t_start) + ' seconds.')
-
-        print('Consumption function at each aggregate market \
-               resources-to-labor ratio gridpoint (for each macro state):')
-        m_grid = np.linspace(0, 10, 200)
-        AggShockMrkvExample.unpackcFunc()
-        for i in range(2):
-            for M in AggShockMrkvExample.Mgrid.tolist():
-                mMin = AggShockMrkvExample.solution[0].mNrmMin[i](M)
-                c_at_this_M = AggShockMrkvExample.cFunc[0][i](m_grid+mMin, M*np.ones_like(m_grid))
-                plt.plot(m_grid+mMin, c_at_this_M)
-            plt.ylim(0., None)
-            plt.show()
-
-    if solve_markov_market:
-        # Solve the "macroeconomic" model by searching for a "fixed point dynamic rule"
-        t_start = clock()
-        print('Now solving a two-state Markov economy.  This should take a few minutes...')
-        MrkvEconomyExample.solve()
-        t_end = clock()
-        print('Solving the "macroeconomic" aggregate shocks model took ' + str(t_end - t_start) + ' seconds.')
-
-        print('Consumption function at each aggregate market \
-               resources-to-labor ratio gridpoint (for each macro state):')
-        m_grid = np.linspace(0, 10, 200)
-        AggShockMrkvExample.unpackcFunc()
-        for i in range(2):
-            for M in AggShockMrkvExample.Mgrid.tolist():
-                mMin = AggShockMrkvExample.solution[0].mNrmMin[i](M)
-                c_at_this_M = AggShockMrkvExample.cFunc[0][i](m_grid+mMin, M*np.ones_like(m_grid))
-                plt.plot(m_grid+mMin, c_at_this_M)
-            plt.ylim(0., None)
-            plt.show()
-
-    if solve_krusell_smith:
-        # Make a Krusell-Smith agent type
-        # NOTE: These agents aren't exactly like KS, as they don't have serially correlated unemployment
-        KSexampleType = deepcopy(AggShockMrkvExample)
-        KSexampleType.IncomeDstn[0] = [[np.array([0.96, 0.04]), np.array([1.0, 1.0]), np.array([1.0/0.96, 0.0])],
-                                       [np.array([0.90, 0.10]), np.array([1.0, 1.0]), np.array([1.0/0.90, 0.0])]]
-
-        # Make a KS economy
-        KSeconomy = deepcopy(MrkvEconomyExample)
-        KSeconomy.agents = [KSexampleType]
-        KSeconomy.AggShkDstn = [[np.array([1.0]), np.array([1.0]), np.array([1.05])],
-                                [np.array([1.0]), np.array([1.0]), np.array([0.95])]]
-        KSeconomy.PermGroFacAgg = [1.0, 1.0]
-        KSexampleType.getEconomyData(KSeconomy)
-        KSeconomy.makeAggShkHist()
-
-        # Solve the K-S model
-        t_start = clock()
-        print('Now solving a Krusell-Smith-style economy.  This should take about a minute...')
-        KSeconomy.solve()
-        t_end = clock()
-        print('Solving the Krusell-Smith model took ' + str(t_end - t_start) + ' seconds.')
-
-    if solve_poly_state:
-        StateCount = 15     # Number of Markov states
-        GrowthAvg = 1.01    # Average permanent income growth factor
-        GrowthWidth = 0.02  # PermGroFacAgg deviates from PermGroFacAgg in this range
-        Persistence = 0.90  # Probability of staying in the same Markov state
-        PermGroFacAgg = np.linspace(GrowthAvg-GrowthWidth, GrowthAvg+GrowthWidth, num=StateCount)
-
-        # Make the Markov array with chosen states and persistence
-        PolyMrkvArray = np.zeros((StateCount, StateCount))
-        for i in range(StateCount):
-            for j in range(StateCount):
-                if i == j:
-                    PolyMrkvArray[i, j] = Persistence
-                elif (i == (j-1)) or (i == (j+1)):
-                    PolyMrkvArray[i, j] = 0.5*(1.0 - Persistence)
-        PolyMrkvArray[0, 0] += 0.5*(1.0 - Persistence)
-        PolyMrkvArray[StateCount-1, StateCount-1] += 0.5*(1.0 - Persistence)
-
-        # Make a consumer type to inhabit the economy
-        PolyStateExample = AggShockMarkovConsumerType(**Params.init_agg_mrkv_shocks)
-        PolyStateExample.MrkvArray = PolyMrkvArray
-        PolyStateExample.PermGroFacAgg = PermGroFacAgg
-        PolyStateExample.IncomeDstn[0] = StateCount*[PolyStateExample.IncomeDstn[0]]
-        PolyStateExample.cycles = 0
-
-        # Make a Cobb-Douglas economy for the agents
-        PolyStateEconomy = CobbDouglasMarkovEconomy(agents=[PolyStateExample], **Params.init_mrkv_cobb_douglas)
-        PolyStateEconomy.MrkvArray = PolyMrkvArray
-        PolyStateEconomy.PermGroFacAgg = PermGroFacAgg
-        PolyStateEconomy.PermShkAggStd = StateCount*[0.006]
-        PolyStateEconomy.TranShkAggStd = StateCount*[0.003]
-        PolyStateEconomy.slope_prev = StateCount*[1.0]
-        PolyStateEconomy.intercept_prev = StateCount*[0.0]
-        PolyStateEconomy.update()
-        PolyStateEconomy.makeAggShkDstn()
-        PolyStateEconomy.makeAggShkHist()  # Simulate a history of aggregate shocks
-        PolyStateExample.getEconomyData(
-            PolyStateEconomy)  # Have the consumers inherit relevant objects from the economy
-
-        # Solve the many state model
-        t_start = clock()
-        print('Now solving an economy with ' + str(StateCount) + ' Markov states.  This might take a while...')
-        PolyStateEconomy.solve()
-        t_end = clock()
-        print('Solving a model with ' + str(StateCount) + ' states took ' + str(t_end - t_start) + ' seconds.')
-
-
-if __name__ == '__main__':
-    main()

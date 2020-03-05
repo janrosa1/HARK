@@ -1,14 +1,74 @@
 HARK  
-Version 0.10.1.dev3
 Release Notes  
 
 # Introduction
 
-This document contains the release notes for the 0.10.1 version of HARK. HARK aims to produce an open source repository of highly modular, easily interoperable code for solving, simulating, and estimating dynamic economic models with heterogeneous agents.
+This document contains the release notes of HARK. HARK aims to produce an open source repository of highly modular, easily interoperable code for solving, simulating, and estimating dynamic economic models with heterogeneous agents.
 
 For more information on HARK, see [our Github organization](https://github.com/econ-ark).
 
 ## Changes
+
+
+### 0.10.4
+
+Release Date: 05-03-2020
+
+#### Major Changes
+ - Last release to support Python 2.7, future releases of econ-ark will support Python 3.6+ [#478](https://github.com/econ-ark/HARK/pull/478)
+ - Move non-reusable model code to examples directory, BayerLuetticke, FashionVictim now in examples instead of in HARK code [#442](https://github.com/econ-ark/HARK/pull/442)
+ - Load default parameters for ConsumptionSaving models [#466](https://github.com/econ-ark/HARK/pull/466)
+ - Improved implementaion of parallelNelderMead [#300](https://github.com/econ-ark/HARK/pull/300)
+ 
+#### Minor Changes 
+ - Notebook utility functions for determining platform, GUI, latex (installation) are available in HARK.utilities [#512](https://github.com/econ-ark/HARK/pull/512)
+ - Few DemARKs moved to examples [#472](https://github.com/econ-ark/HARK/pull/472)
+ - MaxKinks available in ConsumerParameters again [#486](https://github.com/econ-ark/HARK/pull/486)
+
+
+### 0.10.3
+
+Release Date: 12-12-2019
+
+#### Major Changes
+
+- Added constrained perfect foresight model solution. ([#299](https://github.com/econ-ark/HARK/pull/299)
+
+#### Minor Changes
+
+- Fixed slicing error in minimizeNelderMead. ([#460](https://github.com/econ-ark/HARK/pull/460))
+- Fixed matplotlib GUI error. ([#444](https://github.com/econ-ark/HARK/pull/444))
+- Pinned sphinx dependency. ([#436](https://github.com/econ-ark/HARK/pull/436))
+- Fixed bug in ConsPortfolioModel in which the same risky rate of return would be drawn over and over. ([#433](https://github.com/econ-ark/HARK/pull/433))
+- Fixed sphinx dependency errors. ([#411](https://github.com/econ-ark/HARK/pull/411))
+- Refactored simultation.py. ([#408](https://github.com/econ-ark/HARK/pull/408))
+- AgentType.simulate() now throws informative errors if
+attributes required for simulation do not exist, or initializeSim() has
+never been called. ([#320](https://github.com/econ-ark/HARK/pull/320))
+
+### 0.10.2
+
+Release Date: 10-03-2019
+
+#### Minor Changes
+- Add some bugfixes and unit tests to HARK.core. ([#401](https://github.com/econ-ark/HARK/pull/401))
+- Fix error in discrete portfolio choice's AdjustPrb. ([#391](https://github.com/econ-ark/HARK/pull/391))
+
+### 0.10.1.dev5
+
+Release Date: 09-25-2019
+
+#### Minor Changes
+- Added portfolio choice between risky and safe assets (ConsPortfolioModel). ([#241](https://github.com/econ-ark/HARK/pull/241))
+
+### 0.10.1.dev4
+
+Release Date: 09-19-2019
+
+#### Minor Changes
+- Fixes cubic interpolation in KinkedRSolver. ([#386](https://github.com/econ-ark/HARK/pull/386))
+- Documentes the procedure for constructing value function inverses and fixes bug in which survival rate was not included in absolute patience factor. ([#383](https://github.com/econ-ark/HARK/pull/383))
+- Fixes problems that sometimes prevented multiprocessing from working. ([#377](https://github.com/econ-ark/HARK/pull/377))
 
 ### 0.10.1.dev3
 
